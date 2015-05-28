@@ -11,14 +11,14 @@ import random
 
 from math import sqrt, ceil
 
-features = ['DER_mass_MMC','DER_mass_transverse_met_lep',
+features = ['EventId','DER_mass_MMC','DER_mass_transverse_met_lep',
   'DER_mass_vis','DER_pt_h','DER_deltaeta_jet_jet','DER_mass_jet_jet',
   'DER_prodeta_jet_jet','DER_deltar_tau_lep','DER_pt_tot','DER_sum_pt',
   'DER_pt_ratio_lep_tau','DER_met_phi_centrality','DER_lep_eta_centrality',
   'PRI_tau_pt','PRI_tau_eta','PRI_tau_phi','PRI_lep_pt','RI_lep_eta,PRI_lep_phi',
   'PRI_met','PRI_met_phi','PRI_met_sumet','PRI_jet_num','PRI_jet_leading_pt',
   'PRI_jet_leading_eta','PRI_jet_leading_phi','PRI_jet_subleading_pt',
-  'PRI_jet_subleading_eta','PRI_jet_subleading_phi','PRI_jet_all_pt']
+  'PRI_jet_subleading_eta','PRI_jet_subleading_phi','PRI_jet_all_pt','Weight']
 
 
 def plotDistribution(X):
@@ -43,9 +43,9 @@ def plotDistribution(X):
         y /= y.sum()
         sub = plt.subplot(5,6,j+1)
         sub.set_title(features[j])
-        s = sub.scatter( x, y, s=5, c=c[j%len(c)], marker='o', edgecolors='none')
-        
-    plt.show()
+        s = sub.scatter( x, y, s=3, c=c[j%len(c)], marker='o', edgecolors='none')
+    #plt.show()    
+    plt.savefig('distributions.png')
 
 
 def convertLabel(l):
@@ -60,7 +60,7 @@ def main():
     data = np.loadtxt("training.csv", delimiter=',', skiprows=1,
             converters={32: convertLabel})
     #trim
-    #data = data[:100,:]
+    data = data[:100,:]
     print "Shape of the Train set", data.shape
     ids = data[:,0] #first column is id
     X_tr = data[:,1:31] #30 features
