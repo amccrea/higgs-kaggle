@@ -2,8 +2,9 @@
 """
     Show plots for understanding the data
 """
-from matplotlib import pyplot as plt
+import matplotlib
 matplotlib.use('Agg')
+from matplotlib import pyplot as plt
 import numpy as np
 import scipy as sp
 import scipy.io as sio
