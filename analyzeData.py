@@ -24,7 +24,7 @@ features = ['DER_mass_MMC','DER_mass_transverse_met_lep','DER_mass_vis',
 ]
 
 
-def plotDistribution(X):
+def plotDistribution(X, y):
     """
     Plots distribution on each feature to verify
     Gaussian behavior
@@ -38,18 +38,25 @@ def plotDistribution(X):
         ax.grid(True)
         
         F = X[:,j] #only one feature
+        F_s = X[y==0,j]
+        F_b = X[y==1,j]
         step = (F.max() - F.min()) / slots
         x = np.linspace(F.min(), F.max(), slots)
-        y = np.zeros(slots)
+        #separate signal and background
+        s = np.zeros(slots)
+        b = np.zeros(slots)
         i = 0
         #create frequency array
         for x1 in x:
-            y[i] = (F[x1 <= F] < x1 + step).sum()
+            s[i] = (F_s[x1 <= F_s] < x1 + step).sum()
+            b[i] = (F_b[x1 <= F_b] < x1 + step).sum()
             i += 1
         #normalize
-        y /= y.sum()
+        s /= m
+        b /= m
         plt.title(features[j])
-        s = plt.scatter( x, y, s=15, c=c[j%len(c)], marker='o', edgecolors='none')
+        s = plt.scatter( x, s, s=15, c='r', marker='o', edgecolors='none')
+        s = plt.scatter( x, b, s=15, c='b', marker='o', edgecolors='none')
     #plt.show()    
         plt.savefig('distributions%s.png'%features[j])
 
@@ -63,7 +70,7 @@ def main():
     bits = 28
                               
     #read the train set
-    data = np.loadtxt("training.csv", delimiter=',', skiprows=1,
+    data = np.loadtxt("data/training.csv", delimiter=',', skiprows=1,
             converters={32: convertLabel})
     #trim
     #data = data[:100,:]
@@ -77,7 +84,7 @@ def main():
     #print w_tr
     #print y_tr
     #how many of each
-    plotDistribution(X_tr)
+    plotDistribution(X_tr, y_tr)
     
 if __name__ == '__main__':
     main()
