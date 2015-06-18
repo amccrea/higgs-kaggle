@@ -86,6 +86,8 @@ def plot2DFeatures(X, y, w, f1, f2, th=None):
     outline a boundary
     """
     #filter weight threshold
+    print X.shape, w.shape, y.shape, f1, f2
+
     if th is not None:
         ind = w >= th
         X = X[ind,:]
