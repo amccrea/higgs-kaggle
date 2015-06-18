@@ -36,9 +36,9 @@ def plotDistribution(X, y, w, countWeights=False):
     for j in range(n):
         F = X[:,j] #only one feature
         #filter out unknowns
-        F = F[F != -999.0]
-        wf = w[F != -999.0]
-        yf = y[F != -999.0]
+        F = F[F != -999.0].flatten()
+        wf = w[F != -999.0].flatten()
+        yf = y[F != -999.0].flatten()
         
         #seperate signal and background
         F_s = F[yf==1]
@@ -94,8 +94,8 @@ def plot2DFeatures(X, y, w, f1, f2, th=None):
     #filter out uknowns
     ind = np.logical_and(X[:,f1] != -999.0, X[:,f2] != -999.0)
     X = X[ind,:]
-    y = y[ind]
-    w = w[ind]
+    y = y[ind].flatten()
+    w = w[ind].flatten()
     
     #and background
     F1_b = X[y==0, f1]
