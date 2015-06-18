@@ -9,7 +9,8 @@ import numpy as np
 import scipy as sp
 import scipy.io as sio
 from scipy.optimize import fmin_cg
-import random
+import random,  itertools
+from loadData import loadData
 
 from math import sqrt, ceil
 
@@ -24,7 +25,7 @@ features = ['DER_mass_MMC','DER_mass_transverse_met_lep','DER_mass_vis',
 ]
 
 
-def plotDistribution(X, y):
+def plotDistribution(X, y, w, countWeights=False):
     """
     Plots distribution on each feature to verify
     Gaussian behavior
@@ -33,58 +34,109 @@ def plotDistribution(X, y):
     c = 'rgbkmyc'
     m, n = X.shape
     for j in range(n):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.grid(True)
-        
         F = X[:,j] #only one feature
-        F_s = X[y==0,j]
-        F_b = X[y==1,j]
+        #filter out unknowns
+        F = F[F != -999.0]
+        wf = w[F != -999.0]
+        yf = y[F != -999.0]
+        
+        #seperate signal and background
+        F_s = F[yf==1]
+        w_s = wf[yf==1]
+        F_b = F[yf==0]
+        w_b = wf[yf==0]
         step = (F.max() - F.min()) / slots
         x = np.linspace(F.min(), F.max(), slots)
-        #separate signal and background
         s = np.zeros(slots)
         b = np.zeros(slots)
         i = 0
-        #create frequency array
+        #create frequency arrays
         for x1 in x:
-            s[i] = (F_s[x1 <= F_s] < x1 + step).sum()
-            b[i] = (F_b[x1 <= F_b] < x1 + step).sum()
+            #filter feature value by range
+            i_s = F_s[x1 <= F_s] < x1 + step
+            i_b = F_b[x1 <= F_b] < x1 + step
+            #sum weights of events in the range
+            if countWeights:
+                s[i] = w_s[i_s].sum()
+                b[i] = w_b[i_b].sum()
+            #if not, only count the events in the range
+            else:
+                s[i] = i_s.sum()
+                b[i] = i_b.sum()
             i += 1
-        #normalize
-        s /= m
-        b /= m
+        #normalize over the full weight sum
+        if countWeights:
+            s /= w_s.sum()
+            b /= w_b.sum()
+        #otherwise normalize over the # of events on each
+        else:
+            s /= F_s.size
+            b /= F_b.size
         plt.title(features[j])
-        s = plt.scatter( x, s, s=15, c='r', marker='o', edgecolors='none')
-        s = plt.scatter( x, b, s=15, c='b', marker='o', edgecolors='none')
+        #not plot zeros
+        s = plt.scatter( x[s!=0.0], s[s!=0.0], s=15, c='r', marker='o', edgecolors='none')
+        b = plt.scatter( x[b!=0.0], b[b!=0.0], s=15, c='b', marker='o', edgecolors='none')
     #plt.show()    
         plt.savefig('distributions%s.png'%features[j])
+        plt.close()
 
+def plot2DFeatures(X, y, w, f1, f2, th=None):
+    """
+    Plots a 2D f1 vs f2 to see if we can
+    outline a boundary
+    """
+    #filter weight threshold
+    if th is not None:
+        ind = w >= th
+        X = X[ind,:]
+        y = y[ind]
+        w = w[ind]
+    #filter out uknowns
+    ind = np.logical_and(X[:,f1] != -999.0, X[:,f2] != -999.0)
+    X = X[ind,:]
+    y = y[ind]
+    w = w[ind]
+    
+    #and background
+    F1_b = X[y==0, f1]
+    F2_b = X[y==0, f2]
+    plt.scatter( F1_b, F2_b, s=1, c='b', marker='o', edgecolors='none')
 
+    #signal
+    F1_s = X[y==1, f1]
+    F2_s = X[y==1, f2]
+    #filter out uknowns
+    plt.scatter( F1_s, F2_s, s=1, c='r', marker='o', edgecolors='none')
+
+    plt.xlabel(features[f1])
+    plt.ylabel(features[f2])
+    plt.savefig('%s_vs_%s.png'%(features[f1], features[f2]))
+    plt.close()
+    
 def convertLabel(l):
     if l=='s':
-        return 0
-    return 1
+        return 1
+    return 0
 
 def main():    
     bits = 28
-                              
-    #read the train set
-    data = np.loadtxt("data/training.csv", delimiter=',', skiprows=1,
-            converters={32: convertLabel})
-    #trim
-    #data = data[:100,:]
-    print "Shape of the Train set", data.shape
-    ids = data[:,0] #first column is id
-    X_tr = data[:,1:31] #30 features
-    w_tr = data[:,31] #weight
-    y_tr = data[:,32] #labels (signal or background)
-    #print ids
-    #print X_tr
-    #print w_tr
-    #print y_tr
-    #how many of each
-    plotDistribution(X_tr, y_tr)
+    
+    #load data
+    X_tr, y_tr, w_tr = loadData()                          
+    
+    plotDistribution(X_tr, y_tr, w_tr)
+    
+    #select some features for plotting
+    sel_features = [
+    features.index('PRI_tau_eta'),
+    features.index('PRI_lep_eta'),
+    features.index('DER_deltar_tau_lep'),
+    features.index('PRI_met_sumet'),
+    features.index('DER_mass_transverse_met_lep')]
+    
+    #and make all 2D combinations possible
+    for f1, f2 in itertools.combinations(sel_features, 2):
+        plot2DFeatures(X_tr, y_tr, w_tr, f1, f2, th=0.0)
     
 if __name__ == '__main__':
     main()
