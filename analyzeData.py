@@ -91,6 +91,7 @@ def plot2DFeatures(X, y, w, f1, f2, th=None):
         X = X[ind,:]
         y = y[ind]
         w = w[ind]
+    print X.shape, w.shape, y.shape, f1, f2
     #filter out uknowns
     ind = np.logical_and(X[:,f1] != -999.0, X[:,f2] != -999.0)
     X = X[ind,:]
