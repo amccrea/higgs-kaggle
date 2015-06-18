@@ -124,7 +124,7 @@ def main():
     
     #load data
     X_tr, y_tr, w_tr = loadData()                          
-    
+    print "spaes1", X_tr.shape
     plotDistribution(X_tr, y_tr, w_tr)
     
     #select some features for plotting
@@ -134,7 +134,7 @@ def main():
     features.index('DER_deltar_tau_lep'),
     features.index('PRI_met_sumet'),
     features.index('DER_mass_transverse_met_lep')]
-    
+    print "spaes2", X_tr.shape
     #and make all 2D combinations possible
     for f1, f2 in itertools.combinations(sel_features, 2):
         plot2DFeatures(X_tr, y_tr, w_tr, f1, f2, th=0.0)
