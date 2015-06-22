@@ -48,11 +48,11 @@ def loadData(ddir='data/training.csv', debug=False, trim=False):
     and the instrumental probability applied by the simulator.
     Reshaped into (m x 1) vector
     '''
-    W = data[:,31]
+    W = data[:,31:32]
     '''
     Y = "s" or "b" classification for signal and background.
     '''
-    Y = data[:,32]
+    Y = data[:,32:33]
 
     if debug==1:
         print "X:\n%s\n\nY (numeric):\n%s\n\nW:\n%s\n\n" %(X, Y, W)
