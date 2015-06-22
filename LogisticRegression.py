@@ -51,7 +51,8 @@ class LogisticRegression:
         #TODO we need to store the normalization parameters to apply before predicting.
         
         m, self.n = X.shape
-        m, self.k = y.shape
+        #number of classes
+        self.k = y.shape[1] if len(y.shape) == 2 else 1
         #add column of ones
         X = np.insert(X, 0, np.ones(m), axis=1)
         self.n += 1
