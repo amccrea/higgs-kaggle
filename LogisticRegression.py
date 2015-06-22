@@ -128,6 +128,8 @@ class LogisticRegression:
         self.grad = 1.0/m * np.dot(X.T, (h - y))
         #regularization term (all but first feature - row)
         self.grad[1:,:] += self.lmbd / m * self.Theta[1:,:]
+        
+        print self.J
       
     def predict(self, X):
         """
