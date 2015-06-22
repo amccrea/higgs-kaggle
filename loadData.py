@@ -32,10 +32,11 @@ def loadData(ddir='data/training.csv', debug=False, trim=False):
                         delimiter=',',
                         skip_header=1,
                         converters={32: convertLabel})
-    if trim:
-        data = data[:trim,:]
     if debug:
         print "Shape of data", data.shape
+    
+    if trim:
+        data = data[:trim,:]
     
     '''
     X = The 30 features
