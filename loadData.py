@@ -30,7 +30,7 @@ def loadData(ddir='data/training.csv', debug=False, trim=False):
     """
     data = np.loadtxt(ddir,
                         delimiter=',',
-                        skip_header=1,
+                        skiprows=1,
                         converters={32: convertLabel})
     if debug:
         print "Shape of data", data.shape
