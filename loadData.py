@@ -48,7 +48,7 @@ def loadData(ddir='data/training.csv', debug=False, trim=False):
     and the instrumental probability applied by the simulator.
     Reshaped into (m x 1) vector
     '''
-    w = data[:,31]
+    W = data[:,31]
     '''
     Y = "s" or "b" classification for signal and background.
     '''
