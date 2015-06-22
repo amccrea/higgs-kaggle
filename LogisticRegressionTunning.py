@@ -15,9 +15,9 @@ def tuneThreshold():
     
     bestAcc = 0.0
     bestModel = None
+    X_tr, y_tr, w_tr = loadData()
+    m, n = X_tr.shape
     for th in thresholds:
-        X_tr, y_tr, w_tr = loadData()
-        m, n = X_tr.shape
         model = LogisticRegression(features=['PRI_tau_eta',
                                             'PRI_lep_eta',
                                             'DER_deltar_tau_lep',
