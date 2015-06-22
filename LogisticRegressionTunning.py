@@ -23,7 +23,7 @@ def tuneThreshold():
                                             'DER_deltar_tau_lep',
                                             'PRI_met_sumet',
                                             'DER_mass_transverse_met_lep'],
-                                    threshold=th
+                                    threshold=th)
         model.train(X_tr, y_tr, w_tr)
         p, r = model.predict(X_tr)
         #calculate some accuracy on the same train set
