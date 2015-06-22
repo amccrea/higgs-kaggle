@@ -28,7 +28,7 @@ def loadData(ddir='data/training.csv', debug=False, trim=False):
         Load the data in a single go (faster than reading it three times)
         Using a column converter for the label value
     """
-    data = np.genfromtxt(ddir,
+    data = np.loadtxt(ddir,
                         delimiter=',',
                         skip_header=1,
                         converters={32: convertLabel})
