@@ -11,7 +11,7 @@ def tuneThreshold():
     """
         Explore different values of threshold to see which one fits best
     """
-    thresholds = np.linspace(0.1,0.9, 10)
+    thresholds = np.linspace(0.4,0.6, 10)
     
     bestAcc = 0.0
     bestModel = None
